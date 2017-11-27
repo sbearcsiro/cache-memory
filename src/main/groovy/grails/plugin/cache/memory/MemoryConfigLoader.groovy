@@ -4,7 +4,7 @@ import grails.plugin.cache.ConfigLoader
 import groovy.util.logging.Slf4j
 import org.springframework.context.ApplicationContext
 
-@Slf4j
+@Slf4j('logger')
 class MemoryConfigLoader extends ConfigLoader {
     protected boolean rebuildable
 
@@ -16,7 +16,7 @@ class MemoryConfigLoader extends ConfigLoader {
 
     void reload(List<ConfigObject> configs, ApplicationContext ctx) {
         if(!rebuildable){
-            log.info("Reload attempted, but reloading has been disabled by configuration. Ignoring the reload attempt.")
+            logger.info("Reload attempted, but reloading has been disabled by configuration. Ignoring the reload attempt.")
             return
         }
 

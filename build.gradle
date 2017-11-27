@@ -19,9 +19,9 @@ plugins {
 apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: "spring-boot"
+//apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
-apply plugin: "org.grails.grails-gsp"
+//apply plugin: "org.grails.grails-gsp"
 apply plugin: "org.grails.grails-doc"
 // Used for publishing to central repository, remove if not needed
 //apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
@@ -51,33 +51,37 @@ dependencyManagement {
     applyMavenExclusions false
 }
 dependencies {
-    provided 'org.springframework.boot:spring-boot-starter-logging'
-    provided "org.springframework.boot:spring-boot-starter-actuator"
-    provided "org.springframework.boot:spring-boot-autoconfigure"
-    provided "org.springframework.boot:spring-boot-starter-tomcat"
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compile "org.springframework.boot:spring-boot-starter-tomcat"
 
-    provided "org.grails:grails-web-boot"
-    provided "org.grails:grails-dependencies"
+    compile "org.grails:grails-web-boot"
+    compile "org.grails:grails-dependencies"
     provided 'javax.servlet:javax.servlet-api:3.1.0'
 
     testCompile "org.grails:grails-plugin-testing"
 
     console "org.grails:grails-console"
 
-    compile "org.grails.plugins:cache:3.0.3"
+    profile "org.grails.profiles:web-plugin"
+
+    compile "org.grails.plugins:cache"
     provided 'com.google.guava:guava:20.0'
     provided 'org.cache2k:cache2k-api:1.0.1.Final'
     provided 'com.github.ben-manes.caffeine:caffeine:2.5.5'
-}
 
-eclipse {
-    classpath {
-        plusConfigurations += [configurations.provided]
-    }
+    testCompile 'org.cache2k:cache2k-all:1.0.1.Final'
 }
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
-}
+//
+//eclipse {
+//    classpath {
+//        plusConfigurations += [configurations.provided]
+//    }
+//}
+//
+//idea {
+//    module {
+//        scopes.PROVIDED.plus += [configurations.provided]
+//    }
+//}

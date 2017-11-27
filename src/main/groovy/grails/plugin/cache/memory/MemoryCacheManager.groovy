@@ -16,6 +16,10 @@ class MemoryCacheManager implements GrailsCacheManager {
 
     protected ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<>()
 
+    CacheProvider cacheProvider
+
+    Map<String, Object> defaultCache
+
     @Override
     boolean cacheExists(String name) {
         return caches.containsKey(name)
@@ -29,8 +33,13 @@ class MemoryCacheManager implements GrailsCacheManager {
     }
 
     @Override
-    Cache getCache(String s) {
-        return caches.get(s)
+    Cache getCache(String name) {
+        def cache = caches.computeIfAbsent(name) {
+            def builder = (CacheProvider.fromString(defaultCache.get('provider')) ?: cacheProvider)?.cacheBuilder ?: getCacheBuilder()
+            builder.buildCache(defaultCache + [name: name])
+        }
+
+        return cache
     }
 
     @Override
@@ -39,10 +48,13 @@ class MemoryCacheManager implements GrailsCacheManager {
     }
 
     void buildCaches(MemoryConfigBuilder memoryConfigBuilder) {
-        def builder = getCacheBuilder()
+        this.defaultCache = memoryConfigBuilder.defaultCache
+        def defaultBuilder = cacheProvider?.cacheBuilder ?: getCacheBuilder()
         for (cache in memoryConfigBuilder.caches) {
-            def builtCache = builder.buildCache(cache)
-            caches.put(cache.get('name')?.toString(), builtCache)
+            def provider = CacheProvider.fromString(cache['provider'])
+            def builtCache = provider?.cacheBuilder?.buildCache(cache) ?: defaultBuilder.buildCache(cache)
+            def name = cache.get('name')?.toString()
+            caches.put(name, builtCache)
         }
     }
 

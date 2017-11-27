@@ -5,6 +5,15 @@ import groovy.util.logging.Slf4j
 @Slf4j
 class MemoryConfigBuilder extends BuilderSupport {
 
+    public static final String SOFT_VALUES = 'softValues'
+    public static final String WEAK_KEYS = 'weakKeys'
+    public static final String WEAK_VALUES = 'weakValues'
+    public static final String CACHE_LOADER_TIMEOUT_MILLIS = 'cacheLoaderTimeoutMillis'
+    public static final String PROVIDER = 'provider'
+    public static final String MAX_ELEMENTS_IN_MEMORY = 'maxElementsInMemory'
+    public static final String TIME_TO_IDLE_SECONDS = 'timeToIdleSeconds'
+    public static final String TIME_TO_LIVE_SECONDS = 'timeToLiveSeconds'
+    public static final String NAME = 'name'
     protected int unrecognizedElementDepth = 0
     protected List<String> stack = []
     protected List<Map<String, Object>> caches = []
@@ -13,13 +22,13 @@ class MemoryConfigBuilder extends BuilderSupport {
     protected Map<String, Object> current
 
     protected static final List DEFAULT_CACHE_PARAM_NAMES = [
-            'softValues', 'weakKeys', 'weakValues',
-            'cacheLoaderTimeoutMillis',
-            'maxElementsInMemory',
-            'timeToIdleSeconds', 'timeToLiveSeconds']
+            SOFT_VALUES, WEAK_KEYS, WEAK_VALUES,
+            CACHE_LOADER_TIMEOUT_MILLIS, PROVIDER,
+            MAX_ELEMENTS_IN_MEMORY,
+            TIME_TO_IDLE_SECONDS, TIME_TO_LIVE_SECONDS]
 
     protected static final List CACHE_PARAM_NAMES = DEFAULT_CACHE_PARAM_NAMES + [
-            'name']
+            NAME]
 
     def parse(Closure c) {
         c.delegate = this
@@ -46,7 +55,7 @@ class MemoryConfigBuilder extends BuilderSupport {
         log.trace("createNode {}", name)
 
         switch (name) {
-            case 'provider':
+            case 'cacheProvider':
             case 'defaults':
                 stack.push name
                 return name
@@ -101,7 +110,7 @@ class MemoryConfigBuilder extends BuilderSupport {
 
             case 'cache':
 
-                if ('name' == name || 'cache' == name  || name in CACHE_PARAM_NAMES) {
+                if (NAME == name || 'cache' == name  || name in CACHE_PARAM_NAMES) {
                     current[name] = value
                     return name
                 }
@@ -162,10 +171,18 @@ class MemoryConfigBuilder extends BuilderSupport {
             data.clear()
             data.putAll withDefaults
         }
+
+        if (defaultCache != null) {
+            Map<String, Object> withDefaults = [:]
+            withDefaults.putAll defaults
+            withDefaults.putAll defaultCache
+            defaultCache.clear()
+            defaultCache.putAll withDefaults
+        }
     }
 
     protected void mergeCaches() {
-        mergeDefinitions caches, 'name'
+        mergeDefinitions caches, NAME
     }
 
     protected void mergeDefinitions(List<Map<String, Object>> definitions, String propertyName) {
