@@ -48,7 +48,7 @@ Provide in memory cache providers for the Grails cache plugin
 
         grailsCacheConfigLoader(MemoryConfigLoader) {
             rebuildable = reloadable
-            cacheProvider = provider
+//            cacheProvider = provider
         }
 
         grailsCacheManager(MemoryCacheManager) {

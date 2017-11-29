@@ -96,5 +96,8 @@ class MemoryCacheManagerSpec extends Specification {
         c.name == 'c'
 
         d.name == 'd'
+
+        cleanup:
+        a.close()
     }
 }

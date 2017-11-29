@@ -4,12 +4,13 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.util.Assert;
 
+import java.io.Closeable;
 import java.util.concurrent.Callable;
 
 /**
  * Adapter for a Cache2k cache to a Spring Cache
  */
-public class Cache2kCache extends AbstractValueAdaptingCache {
+public class Cache2kCache extends AbstractValueAdaptingCache implements Closeable {
 
     private final String name;
 
@@ -17,20 +18,20 @@ public class Cache2kCache extends AbstractValueAdaptingCache {
 
 
     /**
-     * Create a {@link org.springframework.cache.guava.GuavaCache} instance with the specified name and the
-     * given internal {@link com.google.common.cache.Cache} to use.
+     * Create a {@link grails.plugin.cache.memory.cache2k.Cache2kCache} instance with the specified name and the
+     * given internal {@link org.cache2k.Cache} to use.
      * @param name the name of the cache
-     * @param cache the backing Guava Cache instance
+     * @param cache the backing Cache2k Cache instance
      */
     public Cache2kCache(String name, org.cache2k.Cache<Object, Object> cache) {
         this(name, cache, true);
     }
 
     /**
-     * Create a {@link org.springframework.cache.guava.GuavaCache} instance with the specified name and the
-     * given internal {@link com.google.common.cache.Cache} to use.
+     * Create a {@link grails.plugin.cache.memory.cache2k.Cache2kCache} instance with the specified name and the
+     * given internal {@link org.cache2k.Cache} to use.
      * @param name the name of the cache
-     * @param cache the backing Guava Cache instance
+     * @param cache the backing Cache2k Cache instance
      * @param allowNullValues whether to accept and convert {@code null}
      * values for this cache
      */
@@ -98,5 +99,10 @@ public class Cache2kCache extends AbstractValueAdaptingCache {
     @Override
     public void clear() {
         this.cache.clear();
+    }
+
+    @Override
+    public void close() {
+        this.cache.clearAndClose();
     }
 }

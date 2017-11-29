@@ -29,17 +29,28 @@ class MemoryCacheManager implements GrailsCacheManager {
     boolean destroyCache(String name) {
         def cache = caches.remove(name)
         cache?.clear()
+        if (cache instanceof Closeable) {
+            cache?.close()
+        }
         return cache != null
     }
 
     @Override
     Cache getCache(String name) {
-        def cache = caches.computeIfAbsent(name) {
-            def builder = (CacheProvider.fromString(defaultCache.get('provider')) ?: cacheProvider)?.cacheBuilder ?: getCacheBuilder()
-            builder.buildCache(defaultCache + [name: name])
+        Cache cache = caches.get(name)
+        if (cache == null) {
+            cache = createDefaultCache(name)
+            Cache existing = caches.putIfAbsent(name, cache)
+            if (existing != null) {
+                cache = existing
+            }
         }
-
         return cache
+    }
+
+    Cache createDefaultCache(String name) {
+        def builder = (CacheProvider.fromString(defaultCache.get('provider')) ?: cacheProvider)?.cacheBuilder ?: getCacheBuilder()
+        builder.buildCache(defaultCache + [name: name])
     }
 
     @Override

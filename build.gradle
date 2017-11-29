@@ -16,16 +16,11 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-apply plugin: 'maven-publish'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-//apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
-//apply plugin: "org.grails.grails-gsp"
+apply plugin: 'org.grails.grails-plugin-publish'
 apply plugin: "org.grails.grails-doc"
-// Used for publishing to central repository, remove if not needed
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
 version "1.0.0-SNAPSHOT"
 group "org.grails.plugins"
@@ -73,15 +68,17 @@ dependencies {
 
     testCompile 'org.cache2k:cache2k-all:1.0.1.Final'
 }
-//
-//eclipse {
-//    classpath {
-//        plusConfigurations += [configurations.provided]
-//    }
-//}
-//
-//idea {
-//    module {
-//        scopes.PROVIDED.plus += [configurations.provided]
-//    }
-//}
+
+grailsPublish {
+    user = 'user' // Not required if you define BINTRAY_USER var
+    key = 'key' // Not required if you define BINTRAY_KEY var
+    userOrg = 'atlasoflivingaustralia'
+//    repo = 'plugins' // defaults to plugins
+    githubSlug = 'sbearcsiro/cache-memory'
+    license {
+        name = 'MPL 2.0'
+    }
+    title = 'Cache Memory'
+    desc = 'A Grails Cache provider using Caffeine, Cache2k or Guava caches'
+    developers = [sbearcsiro:'Simon Bear']
+}

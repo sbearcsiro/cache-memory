@@ -18,7 +18,7 @@ class Cache2kBuilder implements CacheBuilder{
         if (args[TIME_TO_LIVE_SECONDS]) builder.expireAfterWrite(args[TIME_TO_LIVE_SECONDS] as Long, SECONDS)
         def unsupported = [SOFT_VALUES, WEAK_KEYS, WEAK_VALUES, TIME_TO_IDLE_SECONDS].findAll { args[it] }.join(', ')
         if (unsupported) {
-            log.warn("Cache2k unsupported properties: {} specified for cache: {}")
+            log.warn("Cache2k unsupported properties: {} specified for cache: {}", unsupported, name)
         }
         new Cache2kCache(name, builder.build())
     }

@@ -8,14 +8,16 @@ import org.springframework.context.ApplicationContext
 class MemoryConfigLoader extends ConfigLoader {
     protected boolean rebuildable
 
-    protected CacheProvider cacheProvider
+//    public CacheProvider cacheProvider
+
+    private boolean built = false
 
     void setRebuildable(boolean rebuildable){
         this.rebuildable = rebuildable
     }
 
     void reload(List<ConfigObject> configs, ApplicationContext ctx) {
-        if(!rebuildable){
+        if(!rebuildable && built){
             logger.info("Reload attempted, but reloading has been disabled by configuration. Ignoring the reload attempt.")
             return
         }
@@ -36,6 +38,8 @@ class MemoryConfigLoader extends ConfigLoader {
         }
 
         cacheManager.buildCaches(builder)
+
+        built = true
 
     }
 }
